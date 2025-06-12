@@ -6,20 +6,23 @@ import { SendIcon, AiIcon } from './icons';
 
 // Function to safely retrieve API_KEY from process.env
 function getApiKey(): string {
+  console.log("Attempting to retrieve API_KEY from process.env.API_KEY"); // New log
   try {
     if (
       typeof process !== 'undefined' &&
       process.env &&
-      typeof process.env.API_KEY === 'string'
+      typeof process.env.API_KEY === 'string' &&
+      process.env.API_KEY.trim() !== '' // Ensure it's not just whitespace
     ) {
-      // Return the key only if it's a non-empty string, otherwise treat as not set.
+      console.log("API_KEY found in process.env.API_KEY:", process.env.API_KEY ? 'Retrieved (value hidden for security)' : 'Not found or empty'); // Modified log
       return process.env.API_KEY;
+    } else {
+      console.log("API_KEY not found or is empty in process.env.API_KEY."); // New log
     }
   } catch (e) {
-    // Log error if accessing process.env fails for some reason
     console.warn("Error attempting to access process.env.API_KEY:", e);
   }
-  return ""; // Default to empty string if not found or error
+  return "";
 }
 
 const API_KEY = getApiKey();
@@ -39,6 +42,7 @@ const AiAssistantPage: React.FC = () => {
     if (API_KEY) {
       try {
         ai.current = new GoogleGenAI({ apiKey: API_KEY });
+        console.log("GoogleGenAI client initialized successfully."); // New log
       } catch (e) {
         console.error("Failed to initialize GoogleGenAI:", e);
         setError("Failed to initialize AI. Please check API key configuration.");
